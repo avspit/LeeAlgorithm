@@ -129,10 +129,19 @@ def init_auto_map():
     print(field)
 
 
-if __name__ == '__main__':
-    print('Как вы хотите сгенерировать поле? Введите "a" - для автоматической генерации, "m" - для ручной генерации')
+def start_app():
+    print('Как вы хотите сгенерировать поле? Введите "a" - для автоматической генерации, "m" - для ручной генерации "s" - для остановки приложения')
     mode = input()
     if (mode == 'a'):
         init_auto_map()
-    else:
+        start_app()
+    elif (mode == 'm'):
         init_manual_map()
+        start_app()
+    else:
+        exit()
+
+
+if __name__ == '__main__':
+    start_app()
+
