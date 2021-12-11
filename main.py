@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 
 
 def init_manual_field():
+    """
+        Инициализация поля
+        :return: Поле
+    """
+
     print('Введите размер поля по шаблону [КоличествоЯчеекПоГоризонтали-КоличествоЯчеекПоВертикали] (например, 10-10)')
     size = input().split(sep='-')
     field = np.zeros((int(size[0]), int(size[1])), dtype=np.int8)
@@ -15,11 +20,24 @@ def init_manual_field():
 
 
 def init_auto_field(rows_max, cols_max):
+    """
+        Инициализация поля
+        :param rows_max: Количество строк
+        :param cols_max: Количество столбцов
+        :return: Поле
+    """
+
     field = np.zeros((rows_max, cols_max), dtype=np.int8)
     return field
 
 
 def init_manual_start_point(field):
+    """
+        Инициализация ячейки старт
+        :param field: Поле
+        :return: Поле
+    """
+
     print('Введите координаты клетки СТАРТ по шаблону [НомерСтроки-НомерСтолбца] (например, 1-3)')
     startPoint = input().split(sep='-')
     field[int(startPoint[0]) - 1][int(startPoint[1]) - 1] = const.cell_start
@@ -28,11 +46,23 @@ def init_manual_start_point(field):
 
 
 def init_auto_start_point(field, rows_max, col_max):
+    """
+        Инициализация ячейки старт
+        :param field: Поле
+        :return: Поле
+    """
+
     field[randrange(rows_max)][randrange(col_max)] = const.cell_start
     return field
 
 
 def init_manual_finish_point(field):
+    """
+        Инициализация ячейки финиш
+        :param field: Поле
+        :return: Поле
+    """
+
     print('Введите координаты клетки ФИНИШ [НомерСтроки-НомерСтолбца] (например, 10-5)')
     finishPoint = input().split(sep='-')
     field[int(finishPoint[0]) - 1][int(finishPoint[1]) - 1] = const.cell_finish
@@ -41,11 +71,23 @@ def init_manual_finish_point(field):
 
 
 def init_auto_finish_point(field, rows_max, col_max):
+    """
+        Инициализация ячейки финиш
+        :param field: Поле
+        :return: Поле
+    """
+
     field[randrange(rows_max)][randrange(col_max)] = const.cell_finish
     return field
 
 
 def wall_checked(wall):
+    """
+        Валидация возможности нарисовать стену
+        :param wall: Ячейка стены
+        :return: True - стену можно нарисовать, False - стену нельзя нарисовать
+    """
+
     if len(wall) <= 1:
         return False
     else:
@@ -64,6 +106,12 @@ def wall_checked(wall):
 
 
 def init_manual_wall(field):
+    """
+        Инициализация стены
+        :param field: Поле
+        :return: Поле
+    """
+
     print('Введите координаты СТЕНЫ с указанием угловых точек [НомерСтрокиНачало-НомерСтолбцаНачало, НомерСтрокиПоворот-НомерСтолбцаПоворот, НомерСтрокиКонец-НомерСтолбцаКонец] (например, 2-3, 8-3, 8-7)')
     wall = input().replace(" ","").split(sep=',')
     if (not wall_checked(wall)):
@@ -96,6 +144,12 @@ def init_manual_wall(field):
 
 
 def init_auto_wall(field, rows_max, col_max, points_on_wall):
+    """
+        Инициализация стены
+        :param field: Поле
+        :return: Поле
+    """
+
     prevPoint = [randrange(rows_max), randrange(col_max)]
     for i in range(1, points_on_wall):
         turn = randrange(2)
@@ -111,12 +165,27 @@ def init_auto_wall(field, rows_max, col_max, points_on_wall):
 
 
 def init_auto_walls(field, rows_max, col_max, count, points_on_wall):
+    """
+        Инициализация стен
+        :param field: Поле
+        :param rows_max: Количество строк
+        :param col_max: Количество столбцов
+        :param count: Количество стен
+        :param points_on_wall: Количество углов, включая стартовую ячейку и финишную
+        :return: Поле
+    """
+
     for i in range(count):
         field = init_auto_wall(field, rows_max, col_max, points_on_wall)
     return field
 
 
 def init_manual_map():
+    """
+        Инициализация поля
+        :return: Поле
+    """
+
     field = init_manual_field()
     field = init_manual_wall(field)
     field = init_manual_start_point(field)
@@ -125,8 +194,13 @@ def init_manual_map():
 
 
 def init_auto_map():
-    rows_max = 10
-    col_max = 10
+    """
+        Инициализация поля
+        :return: Поле
+    """
+
+    rows_max = const.field_rows
+    col_max = const.field_cols
     field = init_auto_field(rows_max, col_max)
     field = init_auto_walls(field, rows_max, col_max, count=3, points_on_wall=3)
     field = init_auto_start_point(field, rows_max, col_max)
@@ -135,6 +209,12 @@ def init_auto_map():
 
 
 def path_restoration(field, wave):
+    """
+        Шаг 2 алгоритма. Восстановление пути
+        :param field: Поле
+        :param wave: Тип волны
+    """
+
     finish_point = np.where(field == const.cell_finish)
     row = finish_point[0][0]
     col = finish_point[1][0]
@@ -156,12 +236,30 @@ def path_restoration(field, wave):
 
 
 def calc_index(row, col, delta):
+    """
+        Вычисление индекса ячейки
+        :param row: Индекс строки ячейки от которой вычисление
+        :param col: Индекс колонки ячейки от которой высиление
+        :param delta: На какое значение отступать
+        :return: Новый индекс строки, Новый индекс колонки, True - если новую ячейку можно получить по новым индексам; False - если нельзя
+    """
+
     r = row + delta[0]
     c = col + delta[1]
     return r, c, r >= const.cell_empty and c >= const.cell_empty and r < const.field_rows and c < const.field_cols
 
 
 def wave_arround(field, row, col, step, wave):
+    """
+        Пускаем волну вокруг ячейки
+        :param field: Поле
+        :param row: Индекс строки ячейки
+        :param col: Индекс колонки ячейки
+        :param step: Текущий шаг
+        :param wave: Тип волны
+        :return: True - достигли ячейки финиша, False - не достигли
+    """
+
     finish = False
     for delta in wave:
         r, c, success = calc_index(row, col, delta)
@@ -175,6 +273,12 @@ def wave_arround(field, row, col, step, wave):
 
 
 def wave_propagation(field, wave):
+    """
+        Шаг 1 алгоритма. Пускание волны
+        :param field: Поле
+        :param wave: Тип волны
+    """
+
     can_wave = True
     finish = False
     step = 1
@@ -191,6 +295,12 @@ def wave_propagation(field, wave):
 
 
 def run_lee_algorithm(field, wave):
+    """
+        Волновой алгоритм
+        :param field: Поле
+        :param wave: Тип волны
+    """
+
     wave_propagation(field, wave)
     path_restoration(field, wave)
 
@@ -204,6 +314,12 @@ def run_lee(field, wave_type='n'):
 
 
 def prepare_table_for_colouring(field):
+    """
+        Подготовка поля к раскраске и выводу графика
+        :param field: Поле
+        :return: Поле
+    """
+
     for row in range(const.field_rows):
         for col in range(const.field_cols):
             curr = field[row][col]
@@ -213,6 +329,12 @@ def prepare_table_for_colouring(field):
 
 
 def prepare_table_colours(field):
+    """
+        Подготовка и раскраска поля для вывода графика
+        :param field: Поле
+        :return: Новое поле для графика
+    """
+
     field = prepare_table_for_colouring(field)
     colours = field.astype(np.str)
     colours[colours == str(const.cell_start)] = const.cell_start_color
@@ -224,6 +346,11 @@ def prepare_table_colours(field):
 
 
 def show_graf(field):
+    """
+        Отображение графика
+        :param field: Поле
+    """
+
     fig, ax = plt.subplots(1, 1)
     ax.axis('tight')
     ax.axis('off')
