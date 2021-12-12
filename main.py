@@ -13,8 +13,8 @@ def init_manual_field():
     print('Введите размер поля по шаблону [КоличествоЯчеекПоГоризонтали-КоличествоЯчеекПоВертикали] (например, 10-10)')
     size = input().split(sep='-')
     field = np.zeros((int(size[0]), int(size[1])), dtype=np.int8)
-    const.field_rows = size[0]
-    const.field_cols = size[1]
+    const.field_rows = int(size[0])
+    const.field_cols = int(size[1])
     print(field)
     return field
 
